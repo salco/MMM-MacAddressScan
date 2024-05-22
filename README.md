@@ -48,7 +48,13 @@ Devices cannot hide from ARP packets like they can hide from Ping.
 
 In your terminal, install `arp-scan`:
 ```console
-sudo apt-get install arp-scan   
+sudo apt-get install arp-scan
+```
+To make it work on non root user you need to do the following call:
+```console
+sudo chmod u+s /usr/sbin/arp-scan
+sudo setcap cap_net_raw+ep /usr/sbin/arp-scan
+sudo ln -s /usr/sbin/arp-scan /bin/arp-scan
 ```
 
 *Optionally*, update the vendor database used by `arp-scan`:
