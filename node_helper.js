@@ -10,7 +10,7 @@
 
 const NodeHelper = require("node_helper");
 const ping = require("ping");
-const sudo = require("sudo");
+const { execFile } = require('child_process');
 
 module.exports = NodeHelper.create({
     
@@ -46,7 +46,11 @@ module.exports = NodeHelper.create({
         if (arpInterface !== '') {
             ifaceOpt = '-I';
         }
-        var arp = sudo(['arp-scan', '-q', arpHosts, ifaceOpt, arpInterface]);
+        var arpScanArgs = ['-q', arpHosts];
+        if (ifaceOpt) {
+            arpScanArgs.push(ifaceOpt, arpInterface);
+        }
+        var arp = execFile('arp-scan', arpScanArgs);
         var buffer = '';
         var errstream = '';
         var discoveredMacAddresses = [];
