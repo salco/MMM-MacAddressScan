@@ -179,6 +179,17 @@ Module.register("MMM-MacAddressScan", {
         return ["moment.js"]
     },
 
+    // Subclass addMissingDevices method.
+    addMissingDevices: function(config, nextDevices) {
+    const existingMacAddresses = new Set(config.devices.map(device => device.macAddress));
+
+    nextDevices.forEach(device => {
+        if (!existingMacAddresses.has(device.macAddress)) {
+            config.devices.push(device);
+        }
+    });
+    },
+
     // Subclass socketNotificationReceived method.
     socketNotificationReceived: function(notification, payload) {
         if (this.config.debug) Log.info(this.name + " received a notification: " + notification, payload)
@@ -206,6 +217,13 @@ Module.register("MMM-MacAddressScan", {
                     lastSeen: moment()
                 })
             );
+
+            if(this.config.showUnknown) {
+                this.addMissingDevices(this.config, payload.map(device =>
+                        Object.assign(device, {
+                        })
+                ));
+           }
 
             if (this.config.showOffline) {
                 var networkDevicesByMac = getKeyedObject(this.networkDevices, 'macAddress');
